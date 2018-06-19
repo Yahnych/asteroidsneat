@@ -1,0 +1,18 @@
+{
+  "name": "asteroidsproyek",
+  "version": "1.0.0",
+  "description": "proyek jst neuroevolution asteroids",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "asneat": "./node_modules/.bin/http-server -a localhost -p 8080 -c-1"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "cors": "^2.8.4",
+    "express": "^4.16.3",
+    "http-server": "^0.11.1"
+  }
+}

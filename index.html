@@ -1,0 +1,179 @@
+﻿<html>
+
+<head>
+    <title>Community Asteroids! - Coding Rainbow</title>
+    <meta charset="UTF-8">
+    <style>
+        @import url(https://fonts.googleapis.com/css?family=Montserrat);
+        body {
+            padding: 0;
+            margin: 0;
+            font-family: 'Montserrat', sans-serif !important;
+        }
+        .col-md-4, .col-md-2{
+            padding-right: 0 !important;
+            padding-left: 0 !important;
+        }
+        .center-text-within-div{
+            position: absolute;
+            transform: translateX(0%) translateY(25%);
+        }
+        .btn{
+            width: 100%;
+            border-radius: 0 !important;
+        }
+    </style>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="https://rawgit.com/wagenaartje/neataptic/master/graph/graph.css">
+</head>
+
+<body>
+    <div id="controlBar" class="container-fluid">
+        <div class="row">
+            <div class="btn-group col-md-4">
+                <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                    Mode
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                    <li>
+                        <a onclick="switchMode('TRAINING')">Training</a>
+                    </li>
+                    <li>
+                        <a onclick="switchMode('PLAY')">Play</a>
+                    </li>
+                    <li>
+                        <a onclick="switchMode('VISUALIZE')">Visualization</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="playBar" style="display: inline;">
+                <div class="btn-group col-md-4">
+                    <button type="button" class="btn btn-primary" onclick="pauseGame()">Pause</button>
+                </div>
+                <div class="btn-group col-md-4">
+                    <button type="button" class="btn btn-primary" onclick="document.getElementById('file-input-play').click();">Load</button>
+                    <input id="file-input-play" type="file" name="name" style="display: none;" onchange='onChooseFile(event, onFileLoad.bind(this,playNetworkBrain))' onclick="this.value=null;"/>
+                </div>
+            </div>
+            <div class="trainingBar" style="display: none;">
+                <div class="btn-group col-md-2">
+                    <button type="button" class="btn btn-primary" onclick="startEvolution()">Start</button>
+                </div>
+                <div class="btn-group col-md-2">
+                    <button type="button" class="btn btn-primary" onclick="pauseEvolution()">Pause</button>
+                </div>
+                <div class="btn-group col-md-2">
+                    <button type="button" class="btn btn-primary" onclick="stopEvolution()">Stop</button>
+                </div>
+            </div>
+            <div class="visualizeBar" style="display: none;">
+                <div class="btn-group col-md-4">
+                    <button type="button" class="btn btn-primary" onclick="document.getElementById('file-input-visualize').click();">Import</button>
+                    <input id="file-input-visualize" type="file" name="name" style="display: none;" onchange='onChooseFile(event, onFileLoad.bind(this,visualizeNetwork))' />
+                </div>
+            </div>
+        </div>
+        <div class="row trainingBar" style="display: none;">
+            <div class="col-md-3">
+                PopSize: <span id="PopSize"></span>
+                <input type="range" min="10" max="100" value="50" class="slider" id="sliderPopSize">
+            </div>
+            <div class="col-md-3">
+                ElitismRate: <span id="ElitismRate"></span>
+                <input type="range" min="0" max="50" value="0" class="slider" id="sliderElitismRate">
+            </div>
+            <div class="col-md-3">
+                MutationRate: <span id="MutationRate"></span>
+                <input type="range" min="30" max="90" value="70" class="slider" id="sliderMutationRate">
+            </div>
+            <div class="col-md-3">
+                MaxGen: <span id="MaxGen"></span>
+                <input type="range" min="10" max="50" value="10" class="slider" id="sliderMaxGen">
+            </div>
+        </div>
+        <div class="row trainingBar" style="display: none;">
+            <div class="col-md-3 center-text-within-div">
+                BestFitness: <span id="BestFitness"></span>
+            </div>
+            <div class="col-md-3 center-text-within-div">
+                RunningPop: <span id="RunningPop"></span>
+            </div>
+            <div class="col-md-3 center-text-within-div">
+                Generation: <span id="Generation"></span>
+            </div>
+            <div class="col-md-3 center-text-within-div">
+                ElapsedTime: <span id="ElapsedTime"></span>
+            </div>
+        </div>
+    </div>
+
+    <div id="resultContainer" class="container-fluid" style="display: none; padding-top:20px;">
+        <!-- <span id="resultReport"></span> -->
+    </div>
+
+    <div id="visualizationContainer" class="container-fluid" style="display: none; padding-top:20px;">
+        <div class="row">
+            <svg class="draw" width="1000px" height="1000px" />
+        </div>
+    </div>
+
+    <div id="scriptContainer" style="display: none;">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <script src="http://d3js.org/d3.v3.min.js"></script>
+        <script src="http://marvl.infotech.monash.edu/webcola/cola.v3.min.js"></script>
+        <script src="https://rawgit.com/wagenaartje/neataptic/master/dist/neataptic.js"></script>
+        <script src="https://rawgit.com/wagenaartje/neataptic/master/graph/graph.js"></script>
+        <script language="javascript" type="text/javascript" src="libraries/p5.js"></script>
+        <script language="javascript" type="text/javascript" src="libraries/p5.dom.js"></script>
+        <script language="javascript" type="text/javascript" src="asteroids/sketch.js"></script>
+        <script language="javascript" type="text/javascript" src="asteroids/input.js"></script>
+        <script language="javascript" type="text/javascript" src="asteroids/entity.js"></script>
+        <script language="javascript" type="text/javascript" src="asteroids/ship.js"></script>
+        <script language="javascript" type="text/javascript" src="asteroids/asteroid.js"></script>
+        <script language="javascript" type="text/javascript" src="asteroids/laser.js"></script>
+        <script language="javascript" type="text/javascript" src="asteroids/dust.js"></script>
+        <script language="javascript" type="text/javascript" src="asteroids/utils.js"></script>
+        <script language="javascript" type="text/javascript" src="ai/evolution.js"></script>
+        <script language="javascript" type="text/javascript" src="ai/simulation.js"></script>
+        <script language="javascript" type="text/javascript" src="index.js"></script>
+        <script>
+            function onFileLoad(callback,event) {
+                callback(event.target.result);
+                //document.getElementById('visualizationContainer').innerText = event.target.result;
+            }
+
+            function onChooseFile(event, onLoadFileHandler) {
+                if (typeof window.FileReader !== 'function')
+                    throw ("The file API isn't supported on this browser.");
+                let input = event.target;
+                if (!input)
+                    throw ("The browser does not properly implement the event object");
+                if (!input.files)
+                    throw ("This browser does not support the `files` property of the file input.");
+                if (!input.files[0])
+                    return undefined;
+                let file = input.files[0];
+                let fr = new FileReader();
+                fr.onload = onLoadFileHandler;
+                fr.readAsText(file);
+            }
+
+            const visualizeNetwork=(networkString)=>{
+                let networkJson=JSON.parse(networkString);
+                let networkArch=neataptic.Network.fromJSON(networkJson);
+                drawGraph(networkArch.graph(1000, 1000), '.draw');
+            }
+
+            const playNetworkBrain=(networkString)=>{
+                let networkJson=JSON.parse(networkString);
+                let networkArch=neataptic.Network.fromJSON(networkJson);
+                isGamePaused=false;
+                setupGame(networkArch);
+            }
+        </script>
+    </div>
+</body>
+
+</html>
